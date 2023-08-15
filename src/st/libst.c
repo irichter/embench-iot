@@ -105,6 +105,13 @@ benchmark_body (int rpt)
          be beyond the 6 registers used for passing parameters
        */
       Calc_LinCorrCoef (ArrayA, ArrayB, MeanA, MeanB /*, &Coef */ );
+
+#ifdef __riscv_flen
+#define FREG "f"
+#else
+#define FREG "r"
+#endif
+      __asm__ volatile("":"+A"(Coef):FREG(VarA),FREG(StddevA),FREG(VarB),FREG(StddevB));
     }
 
   return 0;

@@ -108,6 +108,7 @@ benchmark_body (int rpt)
         }
       }
     }
+    __asm__ volatile(""::"r"(found),"A"(hdr));
     free_beebs(hdr);
   }
 

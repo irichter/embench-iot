@@ -61,6 +61,11 @@ benchmark (void)
   return benchmark_body (LOCAL_SCALE_FACTOR * CPU_MHZ);
 }
 
+#if __riscv_flen
+#define REG_FLOAT "f"
+#else
+#define REG_FLOAT "r"
+#endif
 
 static int
 benchmark_body (int rpt)
@@ -80,21 +85,30 @@ benchmark_body (int rpt)
 
       /* solve some cubic functions */
       /* should get 3 solutions: 2, 6 & 2.5   */
+      __asm__("":"+"REG_FLOAT(a1),"+"REG_FLOAT(b1),"+"REG_FLOAT(c1),"+"REG_FLOAT(d1));
       SolveCubic(a1, b1, c1, d1, &solutions, output);
+      __asm__("":"+r"(solutions):"A"(output));
       soln_cnt0 = solutions;
       memcpy(res0,output,3*sizeof(res0[0]));
       /* should get 1 solution: 2.5           */
+      __asm__("":"+"REG_FLOAT(a2),"+"REG_FLOAT(b2),"+"REG_FLOAT(c2),"+"REG_FLOAT(d2));
       SolveCubic(a2, b2, c2, d2, &solutions, output);
+      __asm__("":"+r"(solutions):"A"(output));
       soln_cnt1 = solutions;
       res1 = output[0];
+      __asm__("":"+"REG_FLOAT(a3),"+"REG_FLOAT(b3),"+"REG_FLOAT(c3),"+"REG_FLOAT(d3));
       SolveCubic(a3, b3, c3, d3, &solutions, output);
+      __asm__("":"+r"(solutions):"A"(output));
+      __asm__("":"+"REG_FLOAT(a4),"+"REG_FLOAT(b4),"+"REG_FLOAT(c4),"+"REG_FLOAT(d4));
       SolveCubic(a4, b4, c4, d4, &solutions, output);
+      __asm__("":"+r"(solutions):"A"(output));
       /* Now solve some random equations */
       for(a1=1;a1<3;a1++) {
 	for(b1=10;b1>8;b1--) {
 	  for(c1=5;c1<6;c1+=0.5) {
             for(d1=-1;d1>-3;d1--) {
 	      SolveCubic(a1, b1, c1, d1, &solutions, output_pos);
+      __asm__("":"+r"(solutions):"A"(output));
             }
 	  }
 	}

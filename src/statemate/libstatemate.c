@@ -1461,6 +1461,7 @@ benchmark_body (int rpt)
 
       interface ();
       FH_DU ();
+	  __asm__ volatile("":"+A"(Bitlist));
     }
 
   return 0;
